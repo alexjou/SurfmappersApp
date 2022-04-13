@@ -1,0 +1,144 @@
+image: openjdk:8-jdk #Defining the Docker Image
+
+variables:
+  # ANDROID_COMPILE_SDK is the version of Android you're compiling with.
+  # It should match compileSdkVersion.
+  ANDROID_COMPILE_SDK: "29"
+
+  # ANDROID_BUILD_TOOLS is the version of the Android build tools you are using.
+  # It should match buildToolsVersion.
+  ANDROID_BUILD_TOOLS: "29.0.3"
+
+  # It's what version of the command line tools we're going to download from the official site.
+  # Official Site-> https://developer.android.com/studio/index.html
+  # There, look down below at the cli tools only, sdk tools package is of format:
+  #        commandlinetools-os_type-ANDROID_SDK_TOOLS_latest.zip
+  # when the script was last modified for latest compileSdkVersion, it was which is written down below
+  ANDROID_SDK_TOOLS: "6514223"
+
+# This folder is cached between builds
+# https://docs.gitlab.com/ee/ci/yaml/index.html#cache
+cache:
+  key: ${CI_PROJECT_ID}
+  paths:
+    - node_modules/
+    - android/.gradle/
+
+# Packages installation before running script
+before_script:
+  - apt-get --quiet update --yes
+  - apt-get --quiet install --yes wget tar unzip lib32stdc++6 lib32z1
+
+  # Setup path as android_home for moving/exporting the downloaded sdk into it
+  - export ANDROID_HOME="${PWD}/android"
+  # Create a new directory at specified location
+  - install -d $ANDROID_HOME
+  # Here we are installing androidSDK tools from official source,
+  # (the key thing here is the url from where you are downloading these sdk tool for command line, so please do note this url pattern there and here as well)
+  # after that unzipping those tools and
+  # then running a series of SDK manager commands to install necessary android SDK packages that'll allow the app to build
+  - wget --output-document=$ANDROID_HOME/cmdline-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_SDK_TOOLS}_latest.zip
+  # move to the archive at ANDROID_HOME
+  - pushd $ANDROID_HOME
+  - unzip -d cmdline-tools cmdline-tools.zip
+  - popd
+  - export PATH=$PATH:${ANDROID_HOME}/cmdline-tools/tools/bin/
+
+  # Nothing fancy here, just checking sdkManager version
+  - sdkmanager --version
+
+  # use yes to accept all licenses
+  - yes | sdkmanager --sdk_root=${ANDROID_HOME} --licenses || true
+  - sdkmanager --sdk_root=${ANDROID_HOME} "platforms;android-${ANDROID_COMPILE_SDK}"
+  - sdkmanager --sdk_root=${ANDROID_HOME} "platform-tools"
+  - sdkmanager --sdk_root=${ANDROID_HOME} "build-tools;${ANDROID_BUILD_TOOLS}"
+  
+  # install nodejs and yarn
+  - curl -sL https://deb.nodesource.com/setup_14.x | bash #Add Node Repo
+  - apt-get install -y nodejs #Install NOde JS
+  - npm install -g react-native-cli #Install React-Native CLI
+  - npm install -g yarn
+  # - npm install #Install npm packages
+  - yarn
+  - react-native link #Link the resources
+
+  # Not necessary, but just for surity
+  - chmod +x ${ANDROID_HOME}/gradlew #Provide permission for execution
+  - mkdir -p ${ANDROID_HOME}/app/build/outputs
+
+# List of stages for jobs, and their order of execution
+stages:
+  - build
+  - test
+  - deploy
+  - clean
+
+# Basic android and gradle stuff
+# This job runs in the build stage, which runs first.
+build-assemble-debug:
+  interruptible: true
+  stage: build
+  only:
+    - master #set trigger for CICD if push or merge in master branch
+  script:
+    - echo "Building the code..."
+    - cd ${ANDROID_HOME} && ./gradlew assembleRelease --no-daemon
+    - ls ${ANDROID_HOME}/app/build/outputs/apk/release
+    - ls ${ANDROID_HOME}/app/build/outputs/logs
+    - echo "Build complete."
+  artifacts:
+    paths:
+      - ${PWD}/android/app/build/outputs/apk/release
+      - ${PWD}/android/app/build/outputs/logs
+
+build-assemble-debug-manual:
+  interruptible: true
+  stage: build
+  when: manual
+  script:
+    - echo "Building the code manual..."
+    - cd ${ANDROID_HOME} && ./gradlew assembleRelease --no-daemon
+    - ls ${ANDROID_HOME}/app/build/outputs/apk/release
+    - ls ${ANDROID_HOME}/app/build/outputs/logs
+    - echo "Build manual complete."
+  artifacts:
+    paths:
+      - ${PWD}/android/app/build/outputs/apk/release
+      - ${PWD}/android/app/build/outputs/logs
+
+# Check linting
+test-lint-debug:
+  interruptible: true
+  stage: test
+  script:
+    - echo "Linting code..."
+    - cd ${ANDROID_HOME} && ./gradlew -Pci --console=plain :app:lintDebug -PbuildDir=lint
+    - echo "No lint issues found."
+
+# Run all tests, if any fails, interrupt the pipeline(fail it)
+test-run-debug:
+  interruptible: true
+  stage: test
+  script:
+    - echo "Running unit tests..."
+    - cd ${ANDROID_HOME} && ./gradlew -Pci --console=plain :app:testDebug
+    - echo "Code coverage is ??? (Should be 80%)"
+
+# This job runs in the clean stage.
+clean-android:      
+  stage: clean
+  when: manual
+  script:
+    - echo "Cleaning android built..."
+    - yarn android-clean
+    - echo "Android Build cleaned."
+
+# This job runs in the deploy stage.
+deploy-rc:      
+  stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
+  when: manual
+  only:
+    - master #set trigger for CICD if push or merge in master branch
+  script:
+    - echo "Deploying App Release Candidate..."
+    - echo "App successfully deployed. (Not yet)"

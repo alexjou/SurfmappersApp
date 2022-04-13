@@ -1,0 +1,23 @@
+export default {
+  colors: {
+    white: '#FFFFFF',
+    primary_button: '#007AFF',
+    primary_blue: '#11ABA6',
+    ligth_blue: '#0BBAE7',
+    primary_red: '#FF3B30',
+    primary_green: '#34C759',
+    button_green: '#299E46',
+    ligth_green: '#12F880',
+    background: '#E5E5E5',
+    border: '#EDEDED',
+    dark: '#141414',
+    gray: '#9C9C9C',
+    gray1: '#797979',
+    gray2: '#3A3A3A',
+    gray4: '#797979',
+    gray6: '#EDEDED',
+    light_gray: '#F3F3F3',
+    yellow: '#FF9500',
+    yellow_secondary: '#FFB54C',
+  },
+};

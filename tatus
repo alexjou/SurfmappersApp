@@ -1,0 +1,452 @@
+[1mdiff --git a/App.tsx b/App.tsx[m
+[1mindex f83d9c5..6efdd58 100644[m
+[1m--- a/App.tsx[m
+[1m+++ b/App.tsx[m
+[36m@@ -124,28 +124,28 @@[m [mconst App = () => {[m
+     (routeNameRef.current = navigationRef?.current?.getCurrentRoute()?.name);[m
+ [m
+   return ([m
+[31m-    <NavigationContainer[m
+[31m-      linking={linking}[m
+[31m-      theme={{[m
+[31m-        ...DefaultTheme,[m
+[31m-        colors: {[m
+[31m-          ...DefaultTheme.colors,[m
+[31m-          background: 'white',[m
+[31m-        },[m
+[31m-      }}[m
+[31m-      ref={navigationRef}[m
+[31m-      onReady={() => {[m
+[31m-        updateCurrentScreen();[m
+[31m-      }}[m
+[31m-      onStateChange={async () => {[m
+[31m-        Tracking.screenChanged([m
+[31m-          routeNameRef.current,[m
+[31m-          navigationRef?.current?.getCurrentRoute()?.name,[m
+[31m-        );[m
+[31m-        updateCurrentScreen();[m
+[31m-      }}[m
+[31m-    >[m
+[31m-      <ApolloProvider>[m
+[32m+[m[32m    <ApolloProvider>[m
+[32m+[m[32m      <NavigationContainer[m
+[32m+[m[32m        linking={linking}[m
+[32m+[m[32m        theme={{[m
+[32m+[m[32m          ...DefaultTheme,[m
+[32m+[m[32m          colors: {[m
+[32m+[m[32m            ...DefaultTheme.colors,[m
+[32m+[m[32m            background: 'white',[m
+[32m+[m[32m          },[m
+[32m+[m[32m        }}[m
+[32m+[m[32m        ref={navigationRef}[m
+[32m+[m[32m        onReady={() => {[m
+[32m+[m[32m          updateCurrentScreen();[m
+[32m+[m[32m        }}[m
+[32m+[m[32m        onStateChange={async () => {[m
+[32m+[m[32m          Tracking.screenChanged([m
+[32m+[m[32m            routeNameRef.current,[m
+[32m+[m[32m            navigationRef?.current?.getCurrentRoute()?.name,[m
+[32m+[m[32m          );[m
+[32m+[m[32m          updateCurrentScreen();[m
+[32m+[m[32m        }}[m
+[32m+[m[32m      >[m
+         <ThemeProvider theme={theme}>[m
+           <StatusBar backgroundColor="white" barStyle="dark-content" />[m
+           <SafeAreaView[m
+[36m@@ -157,9 +157,9 @@[m [mconst App = () => {[m
+             <AppRoutes />[m
+           </SafeAreaView>[m
+         </ThemeProvider>[m
+[31m-      </ApolloProvider>[m
+       <Toast config={toastConfig} ref={ref => Toast.setRef(ref)} />[m
+[31m-    </NavigationContainer>[m
+[32m+[m[32m      </NavigationContainer>[m
+[32m+[m[32m    </ApolloProvider>[m
+   );[m
+ };[m
+ [m
+[1mdiff --git a/source/components/Cart/CartProductList/ProductItem/index.tsx b/source/components/Cart/CartProductList/ProductItem/index.tsx[m
+[1mindex 9bce137..ecb9599 100644[m
+[1m--- a/source/components/Cart/CartProductList/ProductItem/index.tsx[m
+[1m+++ b/source/components/Cart/CartProductList/ProductItem/index.tsx[m
+[36m@@ -20,35 +20,29 @@[m [mimport {[m
+ import { useCart } from '../../../../hooks/cart';[m
+ [m
+ interface CartItem {[m
+[31m-  productThumbnail: string;[m
+[31m-  productId: string;[m
+[31m-  type: string;[m
+[31m-  fullPrice: number;[m
+[31m-  index: number;[m
+[31m-  productType?: any;[m
+[31m-  discount?: number;[m
+[31m-  refetch: Function;[m
+[32m+[m[32m  product: any;[m
+[32m+[m[32m  frame: any;[m
+[32m+[m[32m  price: number;[m
+[32m+[m[32m  discount: number;[m
+ }[m
+ [m
+ const ProductItem: React.FC<CartItem> = ({[m
+[31m-  productThumbnail,[m
+[31m-  productId,[m
+[31m-  fullPrice,[m
+[32m+[m[32m  product,[m
+[32m+[m[32m  frame,[m
+[32m+[m[32m  price,[m
+   discount,[m
+[31m-  productType,[m
+[31m-  refetch,[m
+[31m-  index,[m
+[31m-  type,[m
+[31m-  printed[m
+[32m+[m[32m  index[m
+ }: CartItem) => {[m
+   const { updateCart, changeProductType } = useCart();[m
+   const [isCollapsed, setIsCollapsed] = useState(true);[m
+ [m
+[32m+[m[32m  const itemBasePrice = product.price;[m
+[32m+[m
+   return ([m
+     <>[m
+       <ProductContainer onPress={() => setIsCollapsed(!isCollapsed)}>[m
+         <ProductPreview>[m
+[31m-          <ProductPhoto source={{ uri: productThumbnail }} />[m
+[32m+[m[32m          <ProductPhoto source={{ uri: product.file?.thumbnail || product.images[0].file.thumbnail }} />[m
+           <ProductDescription>[m
+             <PhotoCode>[m
+               #{index}{' '}[m
+[36m@@ -57,21 +51,17 @@[m [mconst ProductItem: React.FC<CartItem> = ({[m
+                 name={isCollapsed ? 'chevron-down' : 'chevron-up'}[m
+               />[m
+             </PhotoCode>[m
+[31m-            <PhotoType>{`${type} - ${printed ? 'Impressa' : 'Digital'}`}</PhotoType>[m
+[32m+[m[32m            <PhotoType>{`${product.__typename} - ${[m
+[32m+[m[32m              frame ? 'Impressa' : 'Digital'[m
+[32m+[m[32m            }`}</PhotoType>[m
+           </ProductDescription>[m
+         </ProductPreview>[m
+         <ProductPrice>[m
+           {discount && <Discount>R$ {discount}</Discount>}[m
+[31m-          <Price>[m
+[31m-            R${' '}[m
+[31m-            {[m
+[31m-              (productType?.total || 0) +[m
+[31m-                fullPrice[m
+[31m-            }[m
+[31m-          </Price>[m
+[32m+[m[32m          <Price>R${price}</Price>[m
+           <DeleteButton[m
+             onPress={async () => {[m
+[31m-              await PythonApi.Cart.removeItem(productId, type);[m
+[32m+[m[32m              await PythonApi.Cart.removeItem(product.id, product.__typename);[m
+               updateCart();[m
+               refetch(true);[m
+             }}[m
+[36m@@ -83,10 +73,10 @@[m [mconst ProductItem: React.FC<CartItem> = ({[m
+       <Collapsible collapsed={isCollapsed}>[m
+         <MultiLineSelector[m
+           onSelect={type => {[m
+[31m-            changeProductType(productId, type);[m
+[32m+[m[32m            changeProductType(product.id, type);[m
+           }}[m
+[31m-          fullPrice={fullPrice / 100}[m
+[31m-          productType={productType || { size: '', type: 'digital' }}[m
+[32m+[m[32m          selected={frame}[m
+[32m+[m[32m          digitalPrice={product.price}[m
+         />[m
+       </Collapsible>[m
+     </>[m
+[1mdiff --git a/source/components/Cart/CartProductList/index.tsx b/source/components/Cart/CartProductList/index.tsx[m
+[1mindex 85e5524..8012c20 100644[m
+[1m--- a/source/components/Cart/CartProductList/index.tsx[m
+[1m+++ b/source/components/Cart/CartProductList/index.tsx[m
+[36m@@ -21,19 +21,13 @@[m [mconst CartProductList: React.FC<any> = ({ items, refetch }) => {[m
+           <FlatList[m
+             data={items}[m
+             keyExtractor={({ product }) => product.id}[m
+[31m-            renderItem={({ item: { product, frame, price }, index }) => ([m
+[32m+[m[32m            renderItem={({ item: { product, frame, price, discount }, index }) => ([m
+               <ProductItem[m
+[31m-                key={product.id}[m
+[31m-                index={index + 1}[m
+[31m-                productThumbnail={[m
+[31m-                  product.file?.thumbnail || product.images[0].file.thumbnail[m
+[31m-                }[m
+[31m-                productId={product.id}[m
+[31m-                fullPrice={price}[m
+[31m-                productType={product.frame}[m
+[31m-                type={product.__typename}[m
+[31m-                refetch={refetch}[m
+[31m-                printed={frame}[m
+[32m+[m[32m                product={product}[m
+[32m+[m[32m                frame={frame}[m
+[32m+[m[32m                price={price}[m
+[32m+[m[32m                discount={discount}[m
+[32m+[m[32m                index={index}[m
+               />[m
+             )}[m
+           />[m
+[1mdiff --git a/source/components/Cart/index.tsx b/source/components/Cart/index.tsx[m
+[1mindex 69e4358..ff1adf0 100644[m
+[1m--- a/source/components/Cart/index.tsx[m
+[1m+++ b/source/components/Cart/index.tsx[m
+[36m@@ -66,6 +66,7 @@[m [mconst cartQuery = gql`[m
+                 file {[m
+                   thumbnail[m
+                 }[m
+[32m+[m[32m                price[m
+               }[m
+               ... on Sequence {[m
+                 id[m
+[36m@@ -75,9 +76,11 @@[m [mconst cartQuery = gql`[m
+                     thumbnail[m
+                   }[m
+                 }[m
+[32m+[m[32m                price[m
+               }[m
+               ... on Bundle {[m
+                 id[m
+[32m+[m[32m                price[m
+               }[m
+             }[m
+           }[m
+[1mdiff --git a/source/components/MultiLineSelector/index.tsx b/source/components/MultiLineSelector/index.tsx[m
+[1mindex d668cd3..eebe2eb 100644[m
+[1m--- a/source/components/MultiLineSelector/index.tsx[m
+[1m+++ b/source/components/MultiLineSelector/index.tsx[m
+[36m@@ -4,77 +4,44 @@[m [mimport { FlatList } from 'react-native';[m
+ import { Row, SelectableText } from '@components/MultiLineSelector/styles';[m
+ import remoteConfig from '@react-native-firebase/remote-config';[m
+ import productsType from '@components/Cart/Dialogs/productsTypeMock';[m
+[32m+[m[32mimport { useCart } from '../../hooks/cart';[m
+ [m
+[31m-const MultiLineSelector: React.FC = ({[m
+[31m-  onSelect,[m
+[31m-  fullPrice,[m
+[31m-  productType = {},[m
+[31m-}) => {[m
+[31m-  const [showDigitalPrice, setShowDigitalPrice] = useState(false);[m
+[32m+[m[32mconst MultiLineSelector: React.FC = ({ onSelect, selected, digitalPrice }) => {[m
+[32m+[m[32m  const { frameOptions } = useCart();[m
+[32m+[m[32m  const [selectedValue, setSelectedValue] = useState(selected);[m
+ [m
+[31m-  const productFormats = useMemo(() => {[m
+[31m-    const typeDigital = {[m
+[31m-      type: 'digital',[m
+[31m-      size: '',[m
+[31m-      description: 'Digital',[m
+[31m-      price: 0,[m
+[31m-    };[m
+[31m-[m
+[31m-    const allFormats = !showDigitalPrice[m
+[31m-      ? [typeDigital, ...productsType][m
+[31m-      : productsType;[m
+[31m-[m
+[31m-    return allFormats[m
+[31m-      .filter(format => format)[m
+[31m-      .map(item => {[m
+[31m-        return {[m
+[31m-          ...item,[m
+[31m-          price: item.price + fullPrice,[m
+[31m-        };[m
+[31m-      });[m
+[31m-  }, [fullPrice, showDigitalPrice]);[m
+[31m-[m
+[31m-  const [selectedValue, setSelectedValue] = useState(null);[m
+[31m-[m
+[31m-  useEffect(()=> {[m
+[31m-    if (productType && (productType.size !== selectedValue?.size || productType.type !== selectedValue?.type)) {[m
+[31m-      const itemSelected = _.find(productFormats, {[m
+[31m-        type: productType.type,[m
+[31m-        size: productType.size,[m
+[31m-      });[m
+[31m-[m
+[31m-      console.log('useEffect productType', productType);[m
+[31m-      setSelectedValue({...itemSelected});[m
+[31m-    }[m
+[31m-  }, [productType]);[m
+[32m+[m[32m  const priceWithFrame = (price, framePrice) => {[m
+[32m+[m[32m    const sum = price + (framePrice || 0);[m
+[32m+[m[32m    const formattedPrice = parseFloat(sum).toFixed(2).replace('.', ',');[m
+[32m+[m[32m    return formattedPrice;[m
+[32m+[m[32m  };[m
+ [m
+[31m-  // console.log('RENDER productFormats', productFormats);[m
+[31m-  // console.log('RENDER selectedValue', selectedValue);[m
+[31m-  // console.log('RENDER productType', productType);[m
+[32m+[m[32m  const renderOption = ({ item: frame }) => {[m
+[32m+[m[32m    const isSameFrame = (frameOption, frameSelection) => {[m
+[32m+[m[32m      const hasSameSize = frameOption?.size === frameSelection?.size;[m
+[32m+[m[32m      const hasSameMaterial =[m
+[32m+[m[32m        frameOption?.type?.toUpperCase() === frameSelection?.material?.toUpperCase() ||[m
+[32m+[m[32m        frameOption?.type?.toUpperCase() === frameSelection?.type?.toUpperCase();[m
+ [m
+[31m-  useEffect(() => {[m
+[31m-    setShowDigitalPrice(remoteConfig().getValue('ENABLE_DIGITAL').asBoolean());[m
+[31m-  }, []);[m
+[32m+[m[32m      return hasSameSize && hasSameMaterial;[m
+[32m+[m[32m    };[m
+ [m
+[31m-  const renderRow = ({ item }) => {[m
+[31m-    const keysToCompare = ['size', 'type'];[m
+[31m-    const selected =[m
+[31m-      selectedValue &&[m
+[31m-      keysToCompare[m
+[31m-        .map(key => item[key] === selectedValue[key])[m
+[31m-        .every(i => !!i);[m
+[32m+[m[32m    const isDigital = frame.type === 'digital';[m
+[32m+[m[32m    const isSelected = selected ? isSameFrame(frame, selected) : isDigital;[m
+ [m
+     return ([m
+       <Row[m
+[31m-        selected={selected}[m
+[32m+[m[32m        selected={isSelected}[m
+         onPress={() => {[m
+[31m-          setSelectedValue(item);[m
+[31m-          onSelect(item);[m
+[32m+[m[32m          setSelectedValue(frame);[m
+[32m+[m[32m          onSelect(frame);[m
+         }}[m
+       >[m
+[31m-        <SelectableText selected={selected}>{item?.description}</SelectableText>[m
+[31m-        <SelectableText selected={selected}>[m
+[31m-          R${parseFloat(item?.price).toFixed(2).replace('.', ',')}[m
+[32m+[m[32m        <SelectableText selected={isSelected}>[m
+[32m+[m[32m          {frame.description}[m
+[32m+[m[32m        </SelectableText>[m
+[32m+[m[32m        <SelectableText selected={isSelected}>[m
+[32m+[m[32m          R${priceWithFrame(digitalPrice, frame.price)}[m
+         </SelectableText>[m
+       </Row>[m
+     );[m
+[36m@@ -84,8 +51,8 @@[m [mconst MultiLineSelector: React.FC = ({[m
+     <FlatList[m
+       keyExtractor={item => item.type + item.size}[m
+       style={{ marginTop: 8 }}[m
+[31m-      data={productFormats}[m
+[31m-      renderItem={renderRow}[m
+[32m+[m[32m      data={frameOptions}[m
+[32m+[m[32m      renderItem={renderOption}[m
+     />[m
+   );[m
+ };[m
+[1mdiff --git a/source/hooks/cart.tsx b/source/hooks/cart.tsx[m
+[1mindex 1a1c719..568fcba 100644[m
+[1m--- a/source/hooks/cart.tsx[m
+[1m+++ b/source/hooks/cart.tsx[m
+[36m@@ -7,7 +7,7 @@[m [mimport React, {[m
+   useState,[m
+ } from 'react';[m
+ import { PythonApi } from '@services/api';[m
+[31m-import { useLazyQuery, gql } from '@apollo/client';[m
+[32m+[m[32mimport { useLazyQuery, gql, useApolloClient } from '@apollo/client';[m
+ import { Alert } from 'react-native';[m
+ import _ from 'lodash';[m
+ [m
+[36m@@ -29,10 +29,12 @@[m [minterface CartState {[m
+ [m
+ interface CartContextData extends CartState {[m
+   productsTypes: any;[m
+[31m-[m
+   updateCart(): void;[m
+[31m-[m
+   changeProductType(): void;[m
+[32m+[m[32m  length: number;[m
+[32m+[m[32m  cart: Record<string, unknown>;[m
+[32m+[m[32m  frameOptions: [];[m
+[32m+[m[32m  saveAddress(): void;[m
+ }[m
+ [m
+ const CartContext = createContext<CartContextData>({} as CartContextData);[m
+[36m@@ -53,20 +55,42 @@[m [mconst cartQuery = gql`[m
+ `;[m
+ [m
+ const CartProvider: React.FC = ({ children }) => {[m
+[32m+[m[32m  const [frameOptions, setFrameOptions] = useState();[m
+   const [getCart, { data }] = useLazyQuery(cartQuery, {[m
+     fetchPolicy: 'network-only'[m
+   });[m
+   const cart = data?.self.carts.active;[m
+ [m
+[31m-  const updateFrames = async () => {[m
+[31m-    await PythonApi.Cart.getFrameOptions();[m
+[31m-  };[m
+[32m+[m[32m  const apolloClient = useApolloClient();[m
+ [m
+   useEffect(() => {[m
+[32m+[m[32m    console.log('Fetching cart context');[m
+     getCart();[m
+[31m-    updateFrames();[m
+   }, [getCart]);[m
+ [m
+[32m+[m[32m  useEffect(() => {[m
+[32m+[m[32m    console.log('Fetching frame options');[m
+[32m+[m[32m    const fetchFrameOptions = async () => {[m
+[32m+[m[32m      const {[m
+[32m+[m[32m        data: { frames },[m
+[32m+[m[32m      } = await PythonApi.Cart.getFrameOptions();[m
+[32m+[m
+[32m+[m[32m      const withDigital = [[m
+[32m+[m[32m        {[m
+[32m+[m[32m          type: 'digital',[m
+[32m+[m[32m          size: '',[m
+[32m+[m[32m          description: 'Digital',[m
+[32m+[m[32m          price: 0,[m
+[32m+[m[32m        },[m
+[32m+[m[32m        ...frames,[m
+[32m+[m[32m      ];[m
+[32m+[m
+[32m+[m[32m      setFrameOptions(withDigital);[m
+[32m+[m[32m    };[m
+[32m+[m
+[32m+[m[32m    fetchFrameOptions();[m
+[32m+[m[32m  }, []);[m
+[32m+[m
+   const value = useMemo(() => {[m
+     const saveAddress = async (address: any) => {[m
+       await PythonApi.Cart.saveAddress(address);[m
+[36m@@ -74,20 +98,6 @@[m [mconst CartProvider: React.FC = ({ children }) => {[m
+     };[m
+ [m
+     const changeProductType = async (productId: string, productType: Frame) => {[m
+[31m-      const items = _.get(data, 'cart.items', []);[m
+[31m-      const itemInCart = _.find(items, { _id: productId });[m
+[31m-[m
+[31m-      if (!itemInCart) {[m
+[31m-        try {[m
+[31m-          await PythonApi.Cart.addItem(productId);[m
+[31m-        } catch (e) {[m
+[31m-          if (e.status !== 406) {[m
+[31m-            Alert.alert('Não foi possível adicionar o item!');[m
+[31m-            return;[m
+[31m-          }[m
+[31m-        }[m
+[31m-      }[m
+[31m-[m
+       try {[m
+         if (productType.type === 'digital') {[m
+           await PythonApi.Cart.removeFrameOnPhoto(productId);[m
+[36m@@ -97,17 +107,19 @@[m [mconst CartProvider: React.FC = ({ children }) => {[m
+             type: productType.type,[m
+           });[m
+         }[m
+[32m+[m[32m        apolloClient.reFetchObservableQueries()[m
+ [m
+[31m-        getCart();[m
+       } catch (error) {[m
+[31m-        Alert.alert('Não foi possível adicionar o item!');[m
+[32m+[m[32m        console.log(error)[m
+[32m+[m[32m        Alert.alert('Não foi possível trocar a moldura!');[m
+       }[m
+     };[m
+[31m-    console.log(data)[m
+[32m+[m
+     return {[m
+       length: cart?.items.length,[m
+       updateCart: getCart,[m
+       cart,[m
+[32m+[m[32m      frameOptions,[m
+       changeProductType,[m
+       saveAddress,[m
+     };[m

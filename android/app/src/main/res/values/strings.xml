@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Surfmappers</string>
+    <string name="facebook_app_id">326154624133447</string>
+    <string moduleConfig="true" name="CodePushDeploymentKey">zTH2idIdwhHrncVZw3P7XWRTrxDaB00lSYo_8</string>
+</resources>

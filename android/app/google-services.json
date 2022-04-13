@@ -1,0 +1,119 @@
+{
+  "project_info": {
+    "project_number": "367928950739",
+    "firebase_url": "https://surfmappers-project.firebaseio.com",
+    "project_id": "surfmappers-project",
+    "storage_bucket": "surfmappers-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:367928950739:android:fed066fbf3e9e92782b926",
+        "android_client_info": {
+          "package_name": "com.surfmappers"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "367928950739-qtjilvaspf55c7nmgtuf1pmt0jbl6brh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDFYWcF5dsnnaRtoDWI6kEifsrtl9VjQ5Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "367928950739-qtjilvaspf55c7nmgtuf1pmt0jbl6brh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "367928950739-p39t80c519415b1g3o2buham1ng18son.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.surfmappers"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:367928950739:android:bc11cc6743337982",
+        "android_client_info": {
+          "package_name": "com.surfmappers.surfmappers"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "367928950739-qtjilvaspf55c7nmgtuf1pmt0jbl6brh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDFYWcF5dsnnaRtoDWI6kEifsrtl9VjQ5Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "367928950739-qtjilvaspf55c7nmgtuf1pmt0jbl6brh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "367928950739-p39t80c519415b1g3o2buham1ng18son.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.surfmappers"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:367928950739:android:3440e8e1eb98a529",
+        "android_client_info": {
+          "package_name": "com.surfmappers.surfmappers.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "367928950739-qtjilvaspf55c7nmgtuf1pmt0jbl6brh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDFYWcF5dsnnaRtoDWI6kEifsrtl9VjQ5Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "367928950739-qtjilvaspf55c7nmgtuf1pmt0jbl6brh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "367928950739-p39t80c519415b1g3o2buham1ng18son.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.surfmappers"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
