@@ -11,7 +11,12 @@
 - `yarn ios ou react-native run-ios`
 ## 3. Para rodar o projeto:
 - `yarn start --reset-cache ou react-native start`
-
+<h1 align="center">
+<img
+    alt="Gif"
+    src="./teste app.gif"
+  />
+</h1>
 
 ultimos retornos da api:
 
